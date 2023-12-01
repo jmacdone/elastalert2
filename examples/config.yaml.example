@@ -125,3 +125,9 @@ alert_time_limit:
 #        - console
 #        - file
 #      propagate: false
+#
+
+#load extensions into the jinja2 Environment
+#jinja_extensions:
+#  - jinja2.ext.debug
+#  - jinja2.ext.do

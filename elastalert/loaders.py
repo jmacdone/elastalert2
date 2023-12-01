@@ -146,12 +146,16 @@ class RulesLoader(object):
 
     base_config = {}
 
-    jinja_environment = Environment(loader=FileSystemLoader(""))
-
     def __init__(self, conf):
         self.rule_schema = load_rule_schema()
         self.base_config = copy.deepcopy(conf)
+        self._jinja_config()
         self.import_rules = {} # import rule dependency
+
+    def _jinja_config(self):
+        self.jinja_environment = Environment(loader=FileSystemLoader(""))
+        for ext in self.base_config.get('jinja_extensions',[]):
+           self.jinja_environment.add_extension(ext)
 
     def load(self, conf, args=None):
         """
@@ -467,7 +471,8 @@ class RulesLoader(object):
             if jinja_template_path:
                 rule["jinja_template"] = self.jinja_environment.get_or_select_template(jinja_template_path)
             else:
-                rule["jinja_template"] = Template(str(rule.get('alert_text', '')))
+                template = str(rule.get('alert_text', ''))
+                rule["jinja_template"] = self.jinja_environment.from_string(template)
 
     def load_modules(self, rule, args=None):
         """ Loads things that could be modules. Enhancements, alerts and rule type. """
