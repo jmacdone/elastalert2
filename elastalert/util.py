@@ -240,7 +240,12 @@ def format_index(index, start, end, add_extra=False):
     indices = set()
     while start.date() <= end.date():
         indices.add(start.strftime(index))
-        start += datetime.timedelta(days=1)
+        if "%M" in index:
+           start += datetime.timedelta(minutes=1)
+        elif "%H" in index:
+           start += datetime.timedelta(hours=1)
+        else:
+           start += datetime.timedelta(days=1)
     num = len(indices)
     if add_extra:
         while len(indices) == num:
